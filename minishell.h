@@ -6,7 +6,7 @@
 /*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/30 01:40:03 by jnannie           #+#    #+#             */
-/*   Updated: 2020/10/05 15:49:48 by jnannie          ###   ########.fr       */
+/*   Updated: 2020/10/06 14:04:02 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 // 	void				*content;
 // 	struct s_list		*next;
 // }						t_list;
+
+
 
 typedef struct			s_command
 {

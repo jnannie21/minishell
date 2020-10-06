@@ -6,7 +6,7 @@
 /*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/29 13:07:15 by jnannie           #+#    #+#             */
-/*   Updated: 2020/10/05 19:01:25 by jnannie          ###   ########.fr       */
+/*   Updated: 2020/10/06 14:51:08 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,11 @@
 // 	}
 // }
 
-static int			print_prompt(void)
+static void			print_prompt(void)
 {
 	char	cwd[PATH_MAX];
 
+	errno = 0;
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
 		ft_printf("%s $ ", cwd);
@@ -40,9 +41,8 @@ static int			print_prompt(void)
 	else
 	{
 		perror("getcwd() error");
-		return (-1);
+		ft_printf(" $ ");
 	}
-	return (0);
 }
 
 // static int			run_command(const char *filename, char *const argv[],
@@ -84,16 +84,15 @@ static int			execute_commands(t_command *commands)
 void				quit_handler(int signum)
 {
 	write(1, "\b\b  \b\b", 6);
-	ft_printf("", signum);
-	// signal(SIGQUIT, SIG_IGN);
+	(void)signum;
 }
 
 void				int_handler(int signum)
 {
 	write(1, "\b\b  \b\b", 6);
-	ft_printf("\n", signum);
+	ft_printf("\n");
 	print_prompt();
-	// signal(SIGINT, SIG_IGN);
+	(void)signum;
 }
 
 void				set_signals_handlers(void)
@@ -127,39 +126,46 @@ void				set_signals_handlers(void)
 // 	}
 // }
 
-int					main(int argc, char *argv[], char *envp[])
+static int			read_line_from_stdin(char **line, int newline)
 {
-	char		*line;
-	t_command	*commands;
-	int			i;
 	int			ret;
 
-	set_signals_handlers();
-	// tty_setup(envp);
-	while (1)
+	ret = 0;
+	if (newline)
+		print_prompt();
+	if ((ret = get_next_line(0, line)) == -1)
+		write(1, "\n", 1);
+	else if (ret == 1)
+		newline = 1;
+	else if (ret == 0)
 	{
-		line = 0;
-		i = 0;
-		errno = 0;
-		ret = 0;
-		if (print_prompt() == -1)
-		{
-			write(1, "\n", 1);
-			continue ;
-		}
-		if ((ret = get_next_line(0, &line)) == -1)
-		{
-			write(1, "\n", 1);
-			continue ;
-		}
-		if (ret == 0 && *line == '\0')
+		if (**line != '\0')
+			newline = 0;
+		else if (**line == '\0' && newline)
 		{
 			ft_printf("exit\n");
 			exit(EXIT_SUCCESS);
 		}
+	}
+	return (newline);
+}
+
+int					main(int argc, char *argv[], char *envp[])
+{
+	char		*line;
+	t_command	*commands;
+	int			newline;
+
+	set_signals_handlers();
+	// tty_setup(envp);
+	newline = 1;
+	while (1)
+	{
+		line = 0;
+		// errno = 0;
+		newline = read_line_from_stdin(&line, newline);
 		commands = parse_line(line);
 		execute_commands(commands);
-		// cb_print_env(environ);
 		free(line);
 	}
 	return (argc && (void **)argv && (void **)envp);
