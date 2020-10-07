@@ -6,7 +6,7 @@
 /*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/29 13:07:15 by jnannie           #+#    #+#             */
-/*   Updated: 2020/10/06 14:51:08 by jnannie          ###   ########.fr       */
+/*   Updated: 2020/10/07 15:34:35 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,15 @@
 
 // extern char **environ;
 
-// static void			cb_print_env(char **envp)
-// {
-// 	while (*envp)
-// 	{
-// 		write(1, *envp, ft_strlen(*envp));
-// 		write(1, "\n", 1);
-// 		envp++;
-// 	}
-// }
+static void			print_tokens(t_token *tokens)
+{
+	while (tokens)
+	{
+		write(1, tokens->data, ft_strlen(tokens->data));
+		write(1, "\n", 1);
+		tokens = tokens->next;
+	}
+}
 
 static void			print_prompt(void)
 {
@@ -69,13 +69,7 @@ static void			print_prompt(void)
 // 	return (0);
 // }
 
-static t_command	*parse_line(char *line)
-{
-	line = 0;
-	return ((t_command *)line);
-}
-
-static int			execute_commands(t_command *commands)
+static int			execute_commands(t_commands *commands)
 {
 	commands = 0;
 	return ((int)commands);
@@ -150,23 +144,32 @@ static int			read_line_from_stdin(char **line, int newline)
 	return (newline);
 }
 
+static t_commands	*create_commands(t_token *tokens)
+{
+	tokens = 0;
+	return ((t_commands *)tokens);
+}
+
 int					main(int argc, char *argv[], char *envp[])
 {
 	char		*line;
-	t_command	*commands;
+	t_token		*tokens;
+	t_commands	*commands;
 	int			newline;
 
 	set_signals_handlers();
-	// tty_setup(envp);
 	newline = 1;
 	while (1)
 	{
 		line = 0;
-		// errno = 0;
 		newline = read_line_from_stdin(&line, newline);
-		commands = parse_line(line);
-		execute_commands(commands);
+		if ((tokens = parse_line(line)) && (commands = create_commands(tokens)))
+			execute_commands(commands);
 		free(line);
+		
+		print_tokens(tokens);
+		free_tokens(tokens);
 	}
+
 	return (argc && (void **)argv && (void **)envp);
 }
