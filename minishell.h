@@ -6,7 +6,7 @@
 /*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/07 12:04:29 by rhullen           #+#    #+#             */
-/*   Updated: 2020/10/25 21:16:04 by jnannie          ###   ########.fr       */
+/*   Updated: 2020/10/26 00:38:26 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,7 +280,8 @@ void					free_buf(t_shell *shell);
 /*
 ** check_command_utils.c
 */
-void					command_is_found(t_shell *shell, t_command *command,
-										char *total_path);
+int						prepath_check(t_shell *shell, t_command *command,
+									char *data);
+int						is_buildin_command(t_shell *shell, char *command);
 
 #endif
