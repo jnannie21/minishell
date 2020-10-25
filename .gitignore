@@ -1,0 +1,11 @@
+.DS_Store
+/*.txt
+libft/libft.a
+libft/objects/
+minishell
+a.out
+test.c
+minishell.dSYM
+.vscode/
+./bash_test/*
+./minishell_test/*

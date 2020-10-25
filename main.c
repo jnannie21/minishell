@@ -5,171 +5,89 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/09/29 13:07:15 by jnannie           #+#    #+#             */
-/*   Updated: 2020/10/07 15:34:35 by jnannie          ###   ########.fr       */
+/*   Created: 2020/10/09 19:18:57 by rhullen           #+#    #+#             */
+/*   Updated: 2020/10/25 16:26:05 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/syslimits.h>
 #include "minishell.h"
 
-// extern char **environ;
+int				g_sigint_flag = 0;
+int				g_last_pid = 0;
+int				g_last_exit_status = 0;
 
-static void			print_tokens(t_token *tokens)
+static t_shell	*preset_main(int argc, char **argv, char **envp)
 {
-	while (tokens)
+	t_shell		*shell;
+
+	if (argc != 1)
 	{
-		write(1, tokens->data, ft_strlen(tokens->data));
-		write(1, "\n", 1);
-		tokens = tokens->next;
+		print_error(argv[0], "there must not be arguments!", 1);
+		exit(EXIT_FAILURE);
 	}
-}
-
-static void			print_prompt(void)
-{
-	char	cwd[PATH_MAX];
-
-	errno = 0;
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-	{
-		ft_printf("%s $ ", cwd);
-	}
-	else
-	{
-		perror("getcwd() error");
-		ft_printf(" $ ");
-	}
-}
-
-// static int			run_command(const char *filename, char *const argv[],
-// 							char *const envp[])
-// {
-// 	pid_t pid;
-// 	int status;
-
-// 	pid = fork();
-
-// 	if (pid == -1)
-// 	{
-// 		return (-1);
-// 	}
-// 	else if (pid > 0)
-// 	{
-// 		waitpid(pid, &status, 0);
-// 	}
-// 	else
-// 	{
-// 		execve(filename, argv, envp);
-// 		exit(EXIT_FAILURE);
-// 	}
-// 	return (0);
-// }
-
-static int			execute_commands(t_commands *commands)
-{
-	commands = 0;
-	return ((int)commands);
-}
-
-void				quit_handler(int signum)
-{
-	write(1, "\b\b  \b\b", 6);
-	(void)signum;
-}
-
-void				int_handler(int signum)
-{
-	write(1, "\b\b  \b\b", 6);
-	ft_printf("\n");
-	print_prompt();
-	(void)signum;
-}
-
-void				set_signals_handlers(void)
-{
-	signal(SIGQUIT, quit_handler);
-	signal(SIGINT, int_handler);
-}
-
-// static void			tty_setup(char *envp[])
-// {
-// 	//stty -echoctl
-// 	pid_t		pid;
-// 	int			status;
-// 	char		*argv;
-
-// 	argv = "-echoctl";
-// 	pid = fork();
-// 	if (pid == 0)
-// 	{
-// 		execve("/bin/stty", &argv, envp);
-// 		exit(EXIT_FAILURE);
-// 	}
-// 	else if (pid > 0)
-// 	{
-// 		wait(&status);
-// 	}
-// 	else
-// 	{
-// 		perror("fork failed");
-// 		exit(EXIT_FAILURE);
-// 	}
-// }
-
-static int			read_line_from_stdin(char **line, int newline)
-{
-	int			ret;
-
-	ret = 0;
-	if (newline)
-		print_prompt();
-	if ((ret = get_next_line(0, line)) == -1)
-		write(1, "\n", 1);
-	else if (ret == 1)
-		newline = 1;
-	else if (ret == 0)
-	{
-		if (**line != '\0')
-			newline = 0;
-		else if (**line == '\0' && newline)
-		{
-			ft_printf("exit\n");
-			exit(EXIT_SUCCESS);
-		}
-	}
-	return (newline);
-}
-
-static t_commands	*create_commands(t_token *tokens)
-{
-	tokens = 0;
-	return ((t_commands *)tokens);
-}
-
-int					main(int argc, char *argv[], char *envp[])
-{
-	char		*line;
-	t_token		*tokens;
-	t_commands	*commands;
-	int			newline;
-
+	if (!(shell = init_shell(envp)))
+		exit_shell(shell, EXIT_FAILURE);
 	set_signals_handlers();
-	newline = 1;
+	return (shell);
+}
+
+static void		parse_and_execute(t_shell *shell)
+{
+	t_token		*tokens;
+
+	if (*shell->line && (shell->tokens = parse_line(shell, shell->line)))
+	{
+		tokens = shell->tokens;
+		if ((check_tokens(shell, tokens)))
+			while (tokens && !shell->parsing_error)
+			{
+				tokens = parse_tokens(shell, tokens);
+				if (shell->command->argv && !shell->parsing_error &&
+					shell->command->is_found)
+					execute(shell, shell->command);
+				free_command(shell);
+				shell->parsing_error = 0;
+				dup2(shell->fd_stdin, 0);
+				dup2(shell->fd_stdout, 1);
+			}
+		free_tokens(shell);
+		shell->parsing_error = 0;
+	}
+}
+
+static void		skip_whitespaces_in_line(t_shell *shell)
+{
+	char		*temp_line;
+
+	temp_line = shell->line;
+	shell->line = skip_whitespaces(shell->line);
+	if (!(shell->line = ft_strdup(shell->line)))
+	{
+		free(temp_line);
+		exit_shell(shell, EXIT_FAILURE);
+	}
+	free(temp_line);
+}
+
+int				main(int argc, char *argv[], char *envp[])
+{
+	t_shell		*shell;
+
+	shell = preset_main(argc, argv, envp);
 	while (1)
 	{
-		line = 0;
-		newline = read_line_from_stdin(&line, newline);
-		if ((tokens = parse_line(line)) && (commands = create_commands(tokens)))
-			execute_commands(commands);
-		free(line);
-		
-		print_tokens(tokens);
-		free_tokens(tokens);
+		shell->command = 0;
+		shell->tokens = 0;
+		shell->line = 0;
+		errno = 0;
+		if (g_sigint_flag != 1 && !TEST)
+			print_prompt();
+		g_sigint_flag = 0;
+		if (read_line_from_stdin(shell, &shell->line) == -1)
+			exit_shell(shell, EXIT_FAILURE);
+		skip_whitespaces_in_line(shell);
+		parse_and_execute(shell);
+		free(shell->line);
 	}
-
-	return (argc && (void **)argv && (void **)envp);
+	return (0);
 }
