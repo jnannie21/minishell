@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rhullen <rhullen@student.21-school.ru>     +#+  +:+       +#+        */
+/*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 13:21:01 by rhullen           #+#    #+#             */
-/*   Updated: 2020/10/20 21:33:42 by rhullen          ###   ########.fr       */
+/*   Updated: 2020/10/26 00:54:46 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void	unset(t_shell *shell, t_command *command)
 		{
 			ft_printf_error("minishell: unset: `%s': not a valid "\
 							"identifier\n", command->argv[i]);
+			g_last_exit_status = 1;
 			return ;
 		}
 		if (check_env_exist(shell, command->argv[i]))

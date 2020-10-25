@@ -6,7 +6,7 @@
 /*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/07 12:04:29 by rhullen           #+#    #+#             */
-/*   Updated: 2020/10/26 00:38:26 by jnannie          ###   ########.fr       */
+/*   Updated: 2020/10/26 00:54:35 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 extern int				g_sigint_flag;
 extern int				g_last_pid;
 extern int				g_last_exit_status;
-extern int				g_child_pid_count;
 
 typedef struct			s_token
 {
