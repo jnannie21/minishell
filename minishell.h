@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
+/*   By: rhullen <rhullen@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/07 12:04:29 by rhullen           #+#    #+#             */
-/*   Updated: 2020/10/26 00:54:35 by jnannie          ###   ########.fr       */
+/*   Updated: 2020/10/26 13:07:10 by rhullen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,16 +93,15 @@ void					get_shell_path(t_shell *shell, char **env);
 void					upd_shell_path(t_shell *shell);
 
 /*
+** utils_3.c
+*/
+int						is_escape_char(char ch);
+
+/*
 ** unset.c
 */
 void					unset(t_shell *shell, t_command *command);
-
-/*
-** t_commands_utils.c
-*/
-void					command_add_back(t_command *comands, t_command *new);
-t_command				*get_last_command(t_command *comands);
-t_command				*new_command(void);
+int						is_unset_name_valid(char *name);
 
 /*
 ** standart_functions_utils.c
@@ -172,14 +171,6 @@ void					set_signals_handlers(void);
 void					execute(t_shell *shell, t_command *command);
 int						wait_for_process(void);
 int						run_buildin(t_shell *shell, t_command *command);
-
-/*
-** dev.c
-*/
-void					print_tokens(t_token *tokens);
-void					print_commands(t_shell *shell);
-void					print_argv(char **argv);
-void					nested_free(char **array);
 
 /*
 ** expand_str.c

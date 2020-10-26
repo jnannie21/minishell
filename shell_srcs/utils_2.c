@@ -6,7 +6,7 @@
 /*   By: rhullen <rhullen@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/14 19:53:32 by rhullen           #+#    #+#             */
-/*   Updated: 2020/10/14 20:06:17 by rhullen          ###   ########.fr       */
+/*   Updated: 2020/10/26 14:08:53 by rhullen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,24 @@ void	get_shell_path(t_shell *shell, char **env)
 	int		i;
 	char	*temp;
 
-	shell->path = ft_split(get_from_env("PATH=", env) + 5, ':');
-	i = 0;
-	while (shell->path[i])
+	if (check_env_exist(shell, "PATH"))
 	{
-		temp = shell->path[i];
-		shell->path[i] = ft_strjoin(shell->path[i], "/");
-		free(temp);
-		i++;
+		shell->path = ft_split(get_from_env("PATH=", env) + 5, ':');
+		i = 0;
+		while (shell->path[i])
+		{
+			temp = shell->path[i];
+			shell->path[i] = ft_strjoin(shell->path[i], "/");
+			free(temp);
+			i++;
+		}
+	}
+	else
+	{
+		shell->path = (char **)(malloc(sizeof(char *) * 1));
+		if (!shell->path)
+			exit_shell(shell, EXIT_FAILURE);
+		shell->path[0] = NULL;
 	}
 }
 

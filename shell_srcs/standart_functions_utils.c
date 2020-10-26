@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   standart_functions_utils.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
+/*   By: rhullen <rhullen@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 13:14:23 by rhullen           #+#    #+#             */
-/*   Updated: 2020/10/24 00:49:46 by jnannie          ###   ########.fr       */
+/*   Updated: 2020/10/26 14:16:08 by rhullen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
