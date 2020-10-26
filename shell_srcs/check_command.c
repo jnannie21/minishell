@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rhullen <rhullen@student.21-school.ru>     +#+  +:+       +#+        */
+/*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/20 21:49:46 by jnannie           #+#    #+#             */
-/*   Updated: 2020/10/26 16:23:44 by rhullen          ###   ########.fr       */
+/*   Updated: 2020/10/26 16:51:38 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ static void		command_is_found(t_shell *shell, t_command *command,
 		free(total_path);
 		exit_shell(shell, EXIT_FAILURE);
 	}
+	free(total_path);
 	command->is_found = 1;
 }
 
@@ -55,14 +56,16 @@ void			search_correct_command(t_shell *shell, t_command *command,
 			(status_struct.st_mode & S_IFMT) == S_IFREG)
 		{
 			if (status_struct.st_mode & S_IXUSR)
+			{
+				free(not_exec);
 				return (command_is_found(shell, command, total_path));
+			}
 			if (!not_exec)
 				not_exec = ft_strdup(total_path);
 		}
 		free(total_path);
 	}
-	if (not_exec)
-		command_is_found(shell, command, not_exec);
+	not_exec ? command_is_found(shell, command, not_exec) : 0;
 }
 
 void			check_correct_command(t_shell *shell, t_command *command,
