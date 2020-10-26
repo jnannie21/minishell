@@ -6,7 +6,7 @@
 /*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 13:21:01 by rhullen           #+#    #+#             */
-/*   Updated: 2020/10/26 00:54:46 by jnannie          ###   ########.fr       */
+/*   Updated: 2020/10/26 14:27:48 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	unset(t_shell *shell, t_command *command)
 {
 	int		i;
 
-	i = 0;
+	i = 1;
 	while (command->argv[i])
 	{
 		if (!is_unset_name_valid(command->argv[i]))

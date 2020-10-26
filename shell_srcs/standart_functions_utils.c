@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   standart_functions_utils.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rhullen <rhullen@student.21-school.ru>     +#+  +:+       +#+        */
+/*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 13:14:23 by rhullen           #+#    #+#             */
-/*   Updated: 2020/10/26 14:16:08 by rhullen          ###   ########.fr       */
+/*   Updated: 2020/10/26 14:46:57 by jnannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	remove_env(t_shell *shell, char *variable)
 	new_env = (char **)malloc(sizeof(char *) * shell->env_len);
 	if (!new_env)
 		exit_shell(shell, EXIT_FAILURE);
-	new_env[shell->env_len] = NULL;
+	new_env[shell->env_len - 1] = NULL;
 	i = 0;
 	while (shell->env[i])
 	{
