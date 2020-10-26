@@ -6,7 +6,7 @@
 /*   By: rhullen <rhullen@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/07 12:04:29 by rhullen           #+#    #+#             */
-/*   Updated: 2020/10/26 13:07:10 by rhullen          ###   ########.fr       */
+/*   Updated: 2020/10/26 16:24:26 by rhullen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 
 # define PATHINPROMPT 1
 # define SHELL_PROMPT "minishell$ "
-# define TEST 0
+# define TEST 1
 
 extern int				g_sigint_flag;
 extern int				g_last_pid;

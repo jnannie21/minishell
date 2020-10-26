@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jnannie <jnannie@student.21-school.ru>     +#+  +:+       +#+        */
+/*   By: rhullen <rhullen@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/20 21:49:46 by jnannie           #+#    #+#             */
-/*   Updated: 2020/10/26 00:31:09 by jnannie          ###   ########.fr       */
+/*   Updated: 2020/10/26 16:23:44 by rhullen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,25 +37,40 @@ static void		command_is_found(t_shell *shell, t_command *command,
 	command->is_found = 1;
 }
 
-void			check_correct_command(t_shell *shell, t_command *command,
-									char *data)
+void			search_correct_command(t_shell *shell, t_command *command,
+										char *data)
 {
 	int				i;
 	struct stat		status_struct;
 	char			*total_path;
+	char			*not_exec;
 
-	if (prepath_check(shell, command, data))
-		return ;
 	i = 0;
+	not_exec = NULL;
 	while (shell->path[i])
 	{
 		if (!(total_path = ft_strjoin(shell->path[i++], data)))
 			exit_shell(shell, EXIT_FAILURE);
 		if (stat(total_path, &status_struct) == 0 &&
 			(status_struct.st_mode & S_IFMT) == S_IFREG)
-			command_is_found(shell, command, total_path);
+		{
+			if (status_struct.st_mode & S_IXUSR)
+				return (command_is_found(shell, command, total_path));
+			if (!not_exec)
+				not_exec = ft_strdup(total_path);
+		}
 		free(total_path);
 	}
+	if (not_exec)
+		command_is_found(shell, command, not_exec);
+}
+
+void			check_correct_command(t_shell *shell, t_command *command,
+									char *data)
+{
+	if (prepath_check(shell, command, data))
+		return ;
+	search_correct_command(shell, command, data);
 	if (command->is_found == 0)
 	{
 		g_last_exit_status = 127;
